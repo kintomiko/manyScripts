@@ -19,13 +19,16 @@ payload={
 
 sinalogin = SinaLogin()
 
-session = sinalogin.login('yuanlin1110@gmail.com', 'daispeed')
+session = sinalogin.login('ourtomiko@gmail.com', 'xxx', is_proxy=False)
 
 f = open('code.jpg','w')
 res = session.open(pipUrl + '?r='+ str(int(math.floor(random.random()*1e8))) + '&s=0&p=' + sinalogin.pcid)
 print >>f, res.read()
 f.close()
 
-session = sinalogin.relogin('yuanlin1110@gmail.com', 'daispeed')
+import Image
+im = Image.open('/home/kin/Pictures/smdh.jpg')
 
+session = sinalogin.relogin('ourtomiko@gmail.com', 'xxx')
+session.opener.addheaders.append(('Referer', 'http://ent.sina.com.cn/f/y/dffyb2015/index.shtml'))
 res = session.open(pollUrl, urllib.urlencode(payload))

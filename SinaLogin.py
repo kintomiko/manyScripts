@@ -50,12 +50,14 @@ class SinaLogin(object):
 		passwd = binascii.b2a_hex(passwd)
 		return passwd
 
-	def login(self, username, password):
+	def login(self, username, password, is_proxy=False):
 		if postdata.get('door')!=None:
 			del postdata['door']
-		# proxy = self.proxyQueue.getProxy()
-		# self.session = Session(proxy)
-		self.session = Session()
+		if is_proxy:
+			proxy = self.proxyQueue.getProxy()
+			self.session = Session(proxy)
+		else:
+			self.session = Session()
 		# prelogin
 		res = self.session.open(self.servertimeUrl, time_out=5)
 		t = long(time.time()/1000)

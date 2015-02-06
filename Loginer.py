@@ -12,6 +12,7 @@ class Session(object):
 		else:
 			self.opener = urllib2.build_opener(cookies, httpHandler)
 		urllib2.install_opener(self.opener)
+		del self.opener.addheaders[0]
 		self.opener.addheaders.append(('Accept-Language', 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,ja;q=0.2,zh-TW;q=0.2'))
 		self.opener.addheaders.append(('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'))
 		self.opener.addheaders.append(('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'))

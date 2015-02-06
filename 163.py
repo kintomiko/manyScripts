@@ -5,40 +5,11 @@ import hashlib
 from Loginer import Session
 import threading,traceback
 import Queue
+from ProxyQueue import ProxyQueue
 
 payload = urllib.urlencode({'id':16,'type':'geshou'})
 
-batchnum = 200
-queueLock = threading.Lock()
-# f = open('proxyok.txt', 'r')
-
-proxyAPIUrl = 'http://www.httpsdaili.com/api.asp?key=8819588195389&getnum='+ str(batchnum) +'&isp=1&area=1'
-
-proxies = Queue.Queue(maxsize=400)
-
-class proxythread(threading.Thread):
-	def __init__(self):  
-		threading.Thread.__init__(self) 
-	def run(self):
-		while 1:
-			global proxies
-			global proxyAPIUrl
-			s = Session()
-			print 'getting proxy from :' + proxyAPIUrl
-			res = s.open(proxyAPIUrl)
-			if res.getcode() == 200:
-				con = res.read()
-				print 'get proxy success! '
-				tmp = con.split('\r\n')[:-1]
-				for proxy in tmp:
-					proxies.put(proxy)
-			time.sleep(5)
-
-
-
-def lockAndGetProxy():
-	global proxies
-	return proxies.get()
+proxies = ProxyQueue()
 
 th=20
 class mythread(threading.Thread):
@@ -50,9 +21,7 @@ class mythread(threading.Thread):
 			i=0
 			errc=0
 			try:
-				proxy = lockAndGetProxy()
-				if proxy == -1:
-					break
+				proxy = proxies.getProxy()
 				session = Session(proxy)
 			except:
 				print 'read proxy or session error'
@@ -78,8 +47,6 @@ class mythread(threading.Thread):
 
 tc = 100
 threads = []
-proxyt = proxythread()
-proxyt.start()
 
 for i in range(1, tc+1):
 	t = mythread()
@@ -89,5 +56,3 @@ for thread in threads:
 	thread.start()
 for thread in threads:
 	thread.join()
-
-proxyt.join()

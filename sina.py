@@ -3,6 +3,7 @@ import cookielib
 import re
 import hashlib
 from Loginer import Session
+from SinaLogin import SinaLogin
 import threading,traceback
 
 headers = {'User-Agent': 'Mozilla/5.0'}
@@ -27,6 +28,17 @@ postdata = {'entry': 'weibo',
 'domain': 'weibo.com',
 'url':'http://weibo.com/ajaxlogin.php?framelogin=1&callback=parent.sinaSSOController.feedBackUrlCallBack',
 'returntype': 'META'
+}
+
+pollUrl = 'http://survey.ent.sina.com.cn/polling.php'
+
+polldata = {
+	'q_8674[]':59933
+	'q_8674[]':59945
+	'poll_id':106946
+	'ad_url':
+	'x':11
+	'y':9
 }
 
 def sinaEncryptMsg(pubkey, msg, servertime, nonce):

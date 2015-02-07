@@ -9,7 +9,7 @@ import math
 pollUrl = 'http://survey.ent.sina.com.cn/polling.php'
 pipUrl = 'http://login.sina.com.cn/cgi/pin.php'
 payload={
-	'q_8674[]':'59985',
+	'q_8674[]':'59933',
 	'q_8674[]':'59945',
 	'poll_id':'106946',
 	'ad_url':'',

@@ -1,10 +1,12 @@
-import urllib, urllib2, json, base64, rsa, time, binascii, random
+import urllib, urllib2, json, base64, rsa, time, binascii, random, math
 import cookielib
 import re
 import hashlib
 from Loginer import Session
 import threading,traceback
 from ProxyQueue import ProxyQueue
+
+pipUrl = 'http://login.sina.com.cn/cgi/pin.php'
 
 headers = {'User-Agent': 'Mozilla/5.0'}
 
@@ -39,7 +41,7 @@ class SinaLogin(object):
 		self.loginUrl = 'http://login.sina.com.cn/sso/login.php?client=ssologin.js(v1.4.18)'
 		self.session = None
 		self.pcid=''
-		self.proxyQueue = ProxyQueue()
+		self.proxyQueue = ProxyQueue(is_thread=False)
 		self.prelogin={}
 
 	def sinaEncryptMsg(self, pubkey, msg, servertime, nonce):
@@ -81,12 +83,20 @@ class SinaLogin(object):
 		login_data = urllib.urlencode(postdata)
 		res = self.session.open(self.loginUrl, login_data, time_out=5)
 		con = res.read()
-		retcode = con[con.find('retcode=')+8:con.find('&',con.find('retcode='))]
+		last = con.find('&',con.find('retcode='))
+		if last != -1:
+			retcode = con[con.find('retcode=')+8:last]
+		else:
+			retcode = con[con.find('retcode=')+8:con.find('retcode=')+9]
 		print username+':'+password + ':' + retcode
-		if retcode != '1':
+		if retcode != '0':
 			print 'login failed'
 			print con
-		return self.session
+		return retcode
+
+	def getPinCode(self):
+		res = self.session.open(pipUrl + '?r='+ str(int(math.floor(random.random()*1e8))) + '&s=0&p=' + self.pcid)
+		return res.read()
 
 	def relogin(self, username, password, code):
 		servertime=self.prelogin['servertime']
@@ -102,9 +112,10 @@ class SinaLogin(object):
 		login_data = urllib.urlencode(postdata)
 		res = self.session.open(self.loginUrl, login_data, time_out=5)
 		con = res.read()
-		retcode = con[con.find('retcode=')+8:con.find('&',con.find('retcode='))]
+		last = con.find('&',con.find('retcode='))
+		if last != -1:
+			retcode = con[con.find('retcode=')+8:last]
+		else:
+			retcode = con[con.find('retcode=')+8:con.find('retcode=')+9]
 		print username+':'+password + ':' + retcode
-		if retcode != '1':
-			print 'login failed'
-		print con
-		return self.session
+		return retcode

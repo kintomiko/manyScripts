@@ -18,6 +18,11 @@ def removeHeaderItem(opener, name):
 		if a[i][0] == name:
 			del a[i]
 
+def resetHeaderItem(opener, name, value):
+	removeHeaderItem(opener, name)
+	opener.addheaders.append((name, value))
+
+
 payload={
 	'q_8674[]':'59933',
 	'q_8674[]':'59945',
@@ -41,48 +46,40 @@ flowersend_data = {
 	'_t':'0'
 }
 
-sinalogin = SinaLogin()
+# sinalogin = SinaLogin()
 
-retcode = sinalogin.login('kintomiko@hotmail.com', 'daispeed', is_proxy=False)
+# retcode = sinalogin.login('kintomiko@hotmail.com', 'daispeed', is_proxy=False)
 
-f = open('code.jpg','w')
-res = session.open(pipUrl + '?r='+ str(int(math.floor(random.random()*1e8))) + '&s=0&p=' + sinalogin.pcid)
-print >>f, res.read()
-f.close()
+def getFlower(sinalogin):
+	resetHeaderItem(sinalogin.session.opener, 'Referer', 'http://weibo.com/u/1268252377?topnav=1&wvr=6&topsug=1')
+	resetHeaderItem(sinalogin.session.opener, 'Content-Type', 'application/x-www-form-urlencoded')
+	resetHeaderItem(sinalogin.session.opener, 'X-Requested-With', 'XMLHttpRequest')
+	resetHeaderItem(sinalogin.session.opener, 'Host', 'weibo.com')
+	resetHeaderItem(sinalogin.session.opener, 'Origin', 'http://weibo.com')
+	resetHeaderItem(sinalogin.session.opener, 'Accept', '*/*')
+	resetHeaderItem(sinalogin.session.opener, 'Connection', 'keep-alive')
+	res = sinalogin.session.open(getFlowerUrl+str(int(time.time()*1e3)), urllib.urlencode(floweradd_data))
+	try:
+		a = eval(res.read())
+	except:
+		return 'failed'
+	return a['code']
 
-import Image
-im = Image.open('code.jpg')
+def sendFlower(sinalogin):
+	resetHeaderItem(sinalogin.session.opener, 'Referer', 'http://club.starvip.weibo.com/plugin?sid=1268252377&ru=http://www.weibo.com/u/1268252377?topnav=1&wvr=6&topsug=1')
+	resetHeaderItem(sinalogin.session.opener, 'Content-Type','application/x-www-form-urlencoded')
+	resetHeaderItem(sinalogin.session.opener, 'X-Requested-With','XMLHttpRequest')
+	resetHeaderItem(sinalogin.session.opener, 'Host', 'club.starvip.weibo.com')
+	resetHeaderItem(sinalogin.session.opener, 'Origin', 'http://club.starvip.weibo.com')
+	res = sinalogin.session.open(sendFlowerUrl+str(int(time.time()*1e3)), urllib.urlencode(flowersend_data))
+	try:
+		a = eval(res.read())
+	except:
+		return 'failed'
+	return a['code']
 
-session = sinalogin.relogin('ourtomiko@gmail.com', 'xxx')
+def poll():
+	removeHeaderItem(session.opener, 'Referer')
+	session.opener.addheaders.append(('Referer', 'http://ent.sina.com.cn/f/y/dffyb2015/index.shtml'))
+	res = session.open(pollUrl, urllib.urlencode(payload))
 
-
-removeHeaderItem(session.opener, 'Referer')
-session.opener.addheaders.append(('Referer', 'http://ent.sina.com.cn/f/y/dffyb2015/index.shtml'))
-res = session.open(pollUrl, urllib.urlencode(payload))
-
-removeHeaderItem(sinalogin.session.opener, 'Referer')
-removeHeaderItem(sinalogin.session.opener, 'Content-Type')
-removeHeaderItem(sinalogin.session.opener, 'X-Requested-With')
-removeHeaderItem(sinalogin.session.opener, 'Host')
-removeHeaderItem(sinalogin.session.opener, 'Origin')
-sinalogin.session.opener.addheaders.append(('Referer', 'http://weibo.com/u/1268252377?topnav=1&wvr=6&topsug=1'))
-sinalogin.session.opener.addheaders.append(('Host', 'weibo.com'))
-sinalogin.session.opener.addheaders.append(('Origin', 'http://weibo.com'))
-sinalogin.session.opener.addheaders.append(('Content-Type','application/x-www-form-urlencoded'))
-sinalogin.session.opener.addheaders.append(('X-Requested-With','XMLHttpRequest'))
-
-res = sinalogin.session.open(getFlowerUrl+str(int(time.time()*1e3)), urllib.urlencode(floweradd_data))
-
-removeHeaderItem(sinalogin.session.opener, 'Referer')
-sinalogin.session.opener.addheaders.append(('Referer', 'http://club.starvip.weibo.com/plugin?sid=1268252377&ru=http://www.weibo.com/u/1268252377?topnav=1&wvr=6&topsug=1'))
-removeHeaderItem(sinalogin.session.opener, 'Content-Type')
-removeHeaderItem(sinalogin.session.opener, 'X-Requested-With')
-removeHeaderItem(sinalogin.session.opener, 'Host')
-removeHeaderItem(sinalogin.session.opener, 'Origin')
-sinalogin.session.opener.addheaders.append(('Host', 'club.starvip.weibo.com'))
-sinalogin.session.opener.addheaders.append(('Origin', 'http://club.starvip.weibo.com'))
-sinalogin.session.opener.addheaders.append(('Content-Type','application/x-www-form-urlencoded'))
-sinalogin.session.opener.addheaders.append(('X-Requested-With','XMLHttpRequest'))
-
-
-res = sinalogin.session.open(sendFlowerUrl+str(int(time.time()*1e3)), urllib.urlencode(flowersend_data))

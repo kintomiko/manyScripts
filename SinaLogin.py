@@ -92,6 +92,9 @@ class SinaLogin(object):
 		if retcode != '0':
 			print 'login failed'
 			print con
+			return retcode
+		redirectUrl = con[con.find('location.replace(\'')+18:con.find('retcode=0')+9]
+		self.session.open(redirectUrl, login_data, time_out=5)
 		return retcode
 
 	def getPinCode(self):

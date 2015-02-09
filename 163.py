@@ -9,7 +9,7 @@ from ProxyQueue import ProxyQueue
 
 payload = urllib.urlencode({'id':16,'type':'geshou'})
 
-proxies = ProxyQueue()
+proxies = ProxyQueue(is_thread=False)
 
 th=20
 class mythread(threading.Thread):
@@ -21,15 +21,19 @@ class mythread(threading.Thread):
 			i=0
 			errc=0
 			try:
-				proxy = proxies.getProxy()
-				session = Session(proxy)
+				# proxy = proxies.getProxy()
+				# session = Session(proxy)
+				session = Session()
 			except:
 				print 'read proxy or session error'
+				exstr = traceback.format_exc()
+				print exstr
 			while 1:
 				try:
 					i+=1
 					if(i%30==0):
-						session = Session(proxy)
+						# session = Session(proxy)
+						session = Session()
 					res = session.open('http://newyear.music.163.com/web/activity/vote/toupiao',payload, 10)
 					con=res.read()
 					print con
@@ -45,7 +49,7 @@ class mythread(threading.Thread):
 						print exstr
 						break
 
-tc = 100
+tc = 500
 threads = []
 
 for i in range(1, tc+1):

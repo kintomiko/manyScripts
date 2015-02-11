@@ -21,9 +21,9 @@ class mythread(threading.Thread):
 			i=0
 			errc=0
 			try:
-				# proxy = proxies.getProxy()
-				# session = Session(proxy)
-				session = Session()
+				proxy = proxies.getProxy()
+				session = Session(proxy)
+				# session = Session()
 			except:
 				print 'read proxy or session error'
 				exstr = traceback.format_exc()
@@ -32,21 +32,23 @@ class mythread(threading.Thread):
 				try:
 					i+=1
 					if(i%30==0):
-						# session = Session(proxy)
-						session = Session()
+						session = Session(proxy)
+						# session = Session()
 					res = session.open('http://newyear.music.163.com/web/activity/vote/toupiao',payload, 10)
 					con=res.read()
-					print con
+					# print con
 					errc=0
+					if json.loads(con)['code']==200:
+						print con
 					if json.loads(con)['code']==500:
-						print 'break and switch new proxy'
+						# print 'break and switch new proxy'
 						break
 				except:
 					errc+=1
-					print 'error! count: '+ str(errc)
+					# print 'error! count: '+ str(errc)
 					if errc>th:
 						exstr = traceback.format_exc()
-						print exstr
+						# print exstr
 						break
 
 tc = 500

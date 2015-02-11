@@ -22,7 +22,7 @@ proxies = ProxyQueue(is_thread=False)
 pollnum = 10
 lock = threading.Lock()
 f = open('goodproxy.txt', 'a')
-
+pcount=0
 count = 0
 
 th=20
@@ -35,6 +35,7 @@ class mythread(threading.Thread):
 		global pollnum
 		global count
 		global lock
+		global pcount
 		c = 0
 		while 1:
 			i=1
@@ -53,7 +54,9 @@ class mythread(threading.Thread):
 				try:
 					if i%(pollnum+1)==0:
 						print >> f, proxy
-						f.flush()
+						pcount+=1
+						if pcount%50==0:
+							f.flush()
 						break
 						# session = Session()
 					res = session.open(pollUrl2+str(int(time.time()*1e3)), time_out=10)

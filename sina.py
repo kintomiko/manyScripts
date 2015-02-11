@@ -33,13 +33,13 @@ postdata = {'entry': 'weibo',
 pollUrl = 'http://survey.ent.sina.com.cn/polling.php'
 
 polldata = {
-	'q_8674[]':59933
-	'q_8674[]':59945
-	'poll_id':106946
-	'ad_url':
-	'x':11
-	'y':9
-}
+	'q_8674[]':59933,
+	'q_8674[]':59945,
+	'poll_id':106946,
+	'ad_url':'',
+	'x':'11',
+	'y':'9'
+	}
 
 def sinaEncryptMsg(pubkey, msg, servertime, nonce):
 	rsaPublickey = int(pubkey, 16)  
@@ -118,7 +118,7 @@ class mythread(threading.Thread):
 				con = res.read()
 				retcode = con[con.find('retcode=')+8:con.find('&',con.find('retcode='))]
 				print username+':'+password + ':' + retcode
-				if retcode == '1':
+				if retcode == '0':
 					print >>f2, username+':'+password+':success'
 				else:
 					print >>f2, username+':'+password+':failed' + retcode

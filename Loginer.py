@@ -1,5 +1,31 @@
 import urllib, urllib2, cookielib, json
 
+def removeHeaderItem(opener, name):
+	opener.addheaders = [x for x in opener.addheaders if x[0] != name]
+
+def resetHeaderItem(opener, name, value):
+	removeHeaderItem(opener, name)
+	opener.addheaders.append((name, value))
+
+def post(session, request):
+	for k,v in request.header.items():
+		resetHeaderItem(session.opener, k, v)
+	res = session.open(request.url, urllib.urlencode(request.post))
+	return res
+
+def get(session, request):
+	for k,v in request.header:
+		resetHeaderItem(session.opener, k, v)
+	res = session.open(request.url)
+	return res
+
+class HttpRequest(object):
+	def __init__(self):
+		self.header={}
+		self.url=''
+		self.post={}
+
+
 class Session(object):
 
 	def __init__(self, proxy=None, debugLevel=0):

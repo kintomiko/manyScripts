@@ -23,18 +23,40 @@ class ProxyQueue(object):
 	def getProxies(self):
 		s = Session()
 		print 'getting proxies from :' + self.proxyAPIUrl
-		res = s.open(self.proxyAPIUrl)
-		if res.getcode() == 200:
-			con = res.read()
-			tmp = con.split('\r\n')[:-1]
-			if len(tmp)==0:
-				return -1
-			print 'successfully get ('+str(len(tmp))+') proxies! '
+		try:
+			res = s.open(self.proxyAPIUrl)
+			if res.getcode() == 200:
+				con = res.read()
+				tmp = con.split('\r\n')[:-1]
+				if len(tmp)==0:
+					return -1
+				print 'successfully get ('+str(len(tmp))+') proxies! '
+				return tmp
+			else:
+				if not self.file:
+					self.file=open('goodproxy.txt', 'r')
+				tmp = []
+				for i in range(0,self.batchnum):
+					line = self.file.readline()
+					if not line:
+						self.file=open('goodproxy.txt', 'r')
+					tmp.append(line)
+				return tmp
+		except:
+			if not self.file:
+				self.file=open('goodproxy.txt', 'r')
+			tmp = []
+			for i in range(0,self.batchnum):
+				line = self.file.readline()
+				if not line:
+					self.file=open('goodproxy.txt', 'r')
+				tmp.append(line)
 			return tmp
 		return -1
 
 	def __init__(self, is_thread=True):
 		self.lock = threading.Lock()
+		self.file=None
 		self.batchnum = 1000
 		self.proxyAPIUrl = 'http://www.httpsdaili.com/api.asp?key=8819588195389&getnum='+ str(self.batchnum) +'&isp=1&area=1'
 		self.proxies = Queue.Queue(maxsize=self.batchnum)

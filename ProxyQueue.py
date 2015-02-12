@@ -25,30 +25,38 @@ class ProxyQueue(object):
 		print 'getting proxies from :' + self.proxyAPIUrl
 		try:
 			res = s.open(self.proxyAPIUrl)
-			if res.getcode() == 200:
-				con = res.read()
+			con = res.read()
+			if res.getcode() == 200 and len(con)>500:
 				tmp = con.split('\r\n')[:-1]
+				print con
 				if len(tmp)==0:
 					return -1
+				f = open('rawproxy.txt', 'a')
+				print >>f, con
+				f.close()
 				print 'successfully get ('+str(len(tmp))+') proxies! '
 				return tmp
 			else:
+				print 'get proxy from file'
 				if not self.file:
 					self.file=open('goodproxy.txt', 'r')
 				tmp = []
 				for i in range(0,self.batchnum):
 					line = self.file.readline()
 					if not line:
+						self.file.close()
 						self.file=open('goodproxy.txt', 'r')
-					tmp.append(line)
+					tmp.append(line[:-1])
 				return tmp
 		except:
+			print 'get proxy failed! got from file'
 			if not self.file:
 				self.file=open('goodproxy.txt', 'r')
 			tmp = []
-			for i in range(0,self.batchnum):
+			for i in range(self.batchnum):
 				line = self.file.readline()
 				if not line:
+					self.file.close()
 					self.file=open('goodproxy.txt', 'r')
 				tmp.append(line)
 			return tmp
@@ -74,6 +82,8 @@ class ProxyQueue(object):
 	def getProxy(self):
 		if self.proxies.empty():
 			self.lock.acquire()
+			# print 'thread : '+str(threading.current_thread())+'get lock'
+			# print self.proxies.empty()
 			if self.proxies.empty():
 				if self.proxyt:
 					print 'start get proxy thread'
@@ -86,7 +96,7 @@ class ProxyQueue(object):
 							self.proxies.put(proxy)
 			self.lock.release()
 		if self.proxies.empty():
-			raise Exception('get proxy failed')
+			raise Exception('get finnally proxy failed')
 		return self.proxies.get()
 
 if __name__ == '__main__':

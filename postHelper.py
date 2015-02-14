@@ -120,14 +120,15 @@ class mythread(threading.Thread):
 	def run(self):
 		global pq, j
 		while 1:
-			for i in range(4):
+			for i in range(2):
 				try:
-					proxy = pq.getProxy()
+					# proxy = pq.getProxy()
 					# print 'get proxy '+proxy
-					s = Loginer.Session(proxy)
-					# s = Loginer.Session()
+					# s = Loginer.Session(proxy)
+					s = Loginer.Session()
 					# s.open('http://play.baidu.com')
 					res = Loginer.post(s, baiduSongLink[i])
+					# print '########################'
 					con = eval(res.read())
 					link = con['data']['songList'][0]['linkinfo']['128']['songLink'].replace('\\','')
 					# print 'opening link: ' + link
@@ -137,7 +138,7 @@ class mythread(threading.Thread):
 						# print 'open play.baidu.com'
 						res = s.open('http://play.baidu.com', time_out=5)
 					# print 'return code ' +res.getcode() 
-					print 'sleeping'
+					# print 'sleeping'
 					time.sleep(90)
 					res = Loginer.post(s, baiduStage[i])
 					print 'posted ' + str(i) + ' | ' + res.read()
@@ -147,7 +148,7 @@ class mythread(threading.Thread):
 						print 'error count: ' + str(j)
 					# traceback.print_exc()
 
-tc = 2000
+tc = 500
 threads = []
 
 for i in range(1, tc+1):

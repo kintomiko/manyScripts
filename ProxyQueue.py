@@ -6,6 +6,17 @@ from Loginer import Session
 import threading,traceback
 import Queue
 
+def parseProxies(con):
+	return con.split('\r\n')[:-1]
+	# rst = []
+	# tmp = eval(con)
+	# tmp = tmp['proxylist']
+	# keys = tmp.keys()
+	# for k in keys:
+		# rst.append(tmp[k]['ip']+':'+tmp[k]['port'])
+	# return rst
+rawproxyf = open('rawproxy.txt', 'a')
+
 class ProxyQueue(object):
 
 	class proxythread(threading.Thread):
@@ -18,22 +29,22 @@ class ProxyQueue(object):
 				if rst != -1:
 					for proxy in rst:
 						self.outer.proxies.put(proxy)
-				time.sleep(10)
+				time.sleep(6)
 
 	def getProxies(self):
+		global rawproxyf
 		s = Session()
 		print 'getting proxies from :' + self.proxyAPIUrl
 		try:
 			res = s.open(self.proxyAPIUrl)
 			con = res.read()
 			if res.getcode() == 200 and len(con)>500:
-				tmp = con.split('\r\n')[:-1]
-				print con
+				tmp = parseProxies(con)
+				print tmp
 				if len(tmp)==0:
 					return -1
-				f = open('rawproxy.txt', 'a')
-				print >>f, con
-				f.close()
+				print >>rawproxyf, con
+				rawproxyf.flush()
 				print 'successfully get ('+str(len(tmp))+') proxies! '
 				return tmp
 			else:
@@ -47,8 +58,12 @@ class ProxyQueue(object):
 						self.file.close()
 						self.file=open('goodproxy.txt', 'r')
 					tmp.append(line[:-1])
+				print 'successfully get ('+str(len(tmp))+') proxies! '
+				print tmp
 				return tmp
 		except:
+			exstr = traceback.format_exc()
+			print exstr
 			print 'get proxy failed! got from file'
 			if not self.file:
 				self.file=open('goodproxy.txt', 'r')
@@ -66,7 +81,9 @@ class ProxyQueue(object):
 		self.lock = threading.Lock()
 		self.file=None
 		self.batchnum = 1000
-		self.proxyAPIUrl = 'http://www.httpsdaili.com/api.asp?key=8819588195389&getnum='+ str(self.batchnum) +'&isp=1&area=1'
+		self.proxyAPIUrl = 'http://www.httpsdaili.com/api.asp?key=gcxfhbvdf&getnum='+str(self.batchnum)
+		# self.proxyAPIUrl = 'http://www.httpsdaili.com/api.asp?key=8819588195389&getnum='+ str(self.batchnum) +'&isp=1&area=1'
+		# self.proxyAPIUrl = 'http://www.yasakvar.com/apiv1/?type=json'
 		self.proxies = Queue.Queue(maxsize=self.batchnum)
 		if is_thread:
 			self.proxyt = self.proxythread(self)

@@ -31,7 +31,7 @@ class ProxyQueue(object):
 				print con
 				if len(tmp)==0:
 					return -1
-				f = open('rawproxy.txt', 'a')
+				f = open('goodproxy.txt', 'a')
 				print >>f, con
 				f.close()
 				print 'successfully get ('+str(len(tmp))+') proxies! '

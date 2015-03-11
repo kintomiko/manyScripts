@@ -14,7 +14,7 @@ def post(session, request):
 	return res
 
 def get(session, request):
-	for k,v in request.header:
+	for k,v in request.header.items():
 		resetHeaderItem(session.opener, k, v)
 	res = session.open(request.url)
 	return res

@@ -10,7 +10,7 @@ def resetHeaderItem(opener, name, value):
 def post(session, request):
 	for k,v in request.header.items():
 		resetHeaderItem(session.opener, k, v)
-	res = session.open(request.url, request.post, time_out=5)
+	res = session.open(request.url, request.post, time_out=15)
 	return res
 
 def get(session, request):

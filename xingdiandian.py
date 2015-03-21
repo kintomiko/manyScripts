@@ -27,14 +27,16 @@ g_post='star_id=591'
 
 g_url='http://www.xingdiandian.com/home/checkin'
 
-proxies = ProxyQueue(is_thread=True)
+proxies = ProxyQueue(is_thread=True, filename='xingdiandian.txt')
+
+f=open('xingdiandian.txt', 'a')
 
 th=5
 class mythread(threading.Thread):
 	def __init__(self):  
 		threading.Thread.__init__(self) 
 	def run(self):
-		global g_header, th, g_post, g_url,proxies
+		global g_header, th, g_post, g_url,proxies, f
 		while 1:
 			i=0
 			errc=0
@@ -59,15 +61,18 @@ class mythread(threading.Thread):
 					post.url = g_url
 					post.post = g_post
 					wait=1
-					while wait<31 and wait!=0:
+					while wait<10 and wait!=0:
 						if wait>1:
 							print 'sleeping (' +str(wait) + ')+1 secs to post again---' 
-							time.sleep(wait+1)
+							time.sleep(wait)
 						res = Loginer.post(session, post)
 						con=res.read()
 						params = con.split(';')	
 						wait = int(params[4])
 						print con
+					print >>f, proxy
+					if i%5==0:
+						f.flush()
 					session.opener.close()
 					errc=0
 					break
@@ -85,7 +90,7 @@ class mythread(threading.Thread):
 						# print exstr
 						break
 
-tc = 500
+tc = 50
 threads = []
 
 for i in range(1, tc+1):

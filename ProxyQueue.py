@@ -50,13 +50,13 @@ class ProxyQueue(object):
 			else:
 				print 'get proxy from file'
 				if not self.file:
-					self.file=open('goodproxy.txt', 'r')
+					self.file=open(self.filename, 'r')
 				tmp = []
 				for i in range(0,self.batchnum):
 					line = self.file.readline()
 					if not line:
 						self.file.close()
-						self.file=open('goodproxy.txt', 'r')
+						self.file=open(self.filename, 'r')
 					tmp.append(line[:-1])
 				print 'successfully get ('+str(len(tmp))+') proxies! '
 				print tmp
@@ -66,18 +66,19 @@ class ProxyQueue(object):
 			print exstr
 			print 'get proxy failed! got from file'
 			if not self.file:
-				self.file=open('goodproxy.txt', 'r')
+				self.file=open(self.filename, 'r')
 			tmp = []
 			for i in range(self.batchnum):
 				line = self.file.readline()
 				if not line:
 					self.file.close()
-					self.file=open('goodproxy.txt', 'r')
+					self.file=open(self.filename, 'r')
 				tmp.append(line)
 			return tmp
 		return -1
 
-	def __init__(self, is_thread=True):
+	def __init__(self, is_thread=True, filename='goodproxy.txt'):
+		self.filename = filename
 		self.lock = threading.Lock()
 		self.file=None
 		self.batchnum = 1000
@@ -103,17 +104,18 @@ class ProxyQueue(object):
 			# print self.proxies.empty()
 			if self.proxies.empty():
 				if self.proxyt:
-					print 'start get proxy thread'
-					self.start()
-					time.sleep(1)
+					# print 'start get proxy thread'
+					try:
+						self.start()
+					except:
+						pass
+						# print 'waiting...'
 				else:
 					rst = self.getProxies()
 					if rst != -1:
 						for proxy in rst:
 							self.proxies.put(proxy)
 			self.lock.release()
-		if self.proxies.empty():
-			raise Exception('get finnally proxy failed')
 		return self.proxies.get()
 
 if __name__ == '__main__':

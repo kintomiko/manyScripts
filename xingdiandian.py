@@ -22,21 +22,22 @@ g_header={
 'X-Requested-With':'XMLHttpRequest',
 'X-CSRF-Token':''
 }
+arr = [591, 6086, 6089, 6090, 6092, 6093]
 
-g_post='star_id=591'
+g_post='star_id='
 
 g_url='http://www.xingdiandian.com/home/checkin'
 
 proxies = ProxyQueue(is_thread=True, filename='xingdiandian.txt')
 
-f=open('xingdiandian.txt', 'a')
+# f=open('xingdiandian.txt', 'a')
 
 th=5
 class mythread(threading.Thread):
 	def __init__(self):  
 		threading.Thread.__init__(self) 
 	def run(self):
-		global g_header, th, g_post, g_url,proxies, f
+		global g_header, th, g_post, g_url,proxies, f, arr
 		while 1:
 			i=0
 			errc=0
@@ -59,20 +60,21 @@ class mythread(threading.Thread):
 					post.header = dict(g_header)
 					post.header['X-CSRF-Token'] = csrf
 					post.url = g_url
-					post.post = g_post
-					wait=1
-					while wait<10 and wait!=0:
-						if wait>1:
-							print 'sleeping (' +str(wait) + ')+1 secs to post again---' 
-							time.sleep(wait)
-						res = Loginer.post(session, post)
-						con=res.read()
-						params = con.split(';')	
-						wait = int(params[4])
-						print con
-					print >>f, proxy
-					if i%5==0:
-						f.flush()
+					for startid in arr:
+						post.post = g_post+str(startid)
+						wait=1
+						while wait<10 and wait!=0:
+							if wait>1:
+								print 'sleeping (' +str(wait) + ')+1 secs to post again---' 
+								time.sleep(wait)
+							res = Loginer.post(session, post)
+							con=res.read()
+							params = con.split(';')	
+							wait = int(params[4])
+							print str(startid)+'||'+con
+					# print >>f, proxy
+					# if i%5==0:
+					# 	f.flush()
 					session.opener.close()
 					errc=0
 					break
@@ -90,7 +92,7 @@ class mythread(threading.Thread):
 						# print exstr
 						break
 
-tc = 50
+tc = 80
 threads = []
 
 for i in range(1, tc+1):

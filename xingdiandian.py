@@ -28,7 +28,7 @@ g_post='star_id='
 
 g_url='http://www.xingdiandian.com/home/checkin'
 
-proxies = ProxyQueue(is_thread=True, filename='xingdiandian.txt')
+proxies = ProxyQueue(is_thread=True, filename='kuaidaili.txt')
 
 # f=open('xingdiandian.txt', 'a')
 
@@ -92,7 +92,7 @@ class mythread(threading.Thread):
 						# print exstr
 						break
 
-tc = 80
+tc = 200
 threads = []
 
 for i in range(1, tc+1):

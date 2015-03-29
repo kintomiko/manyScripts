@@ -353,7 +353,7 @@ def changeContent(post, content):
 	for k in keys:
 		res+=k+'='+urllib.unquote(r[k])
 	res+=code
-	sign=hashlib.md5(res).hexdigest().upper()
+		
 	r['sign']=str(sign)
 	return urllib.urlencode(r).replace('%25','%')
 

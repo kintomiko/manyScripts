@@ -7,7 +7,7 @@ import Loginer
 import threading,traceback
 import Queue
 from ProxyQueue import ProxyQueue
-
+import sys
 
 g_header={
 'Accept':'application/json, text/javascript, */*; q=0.01',
@@ -28,7 +28,10 @@ g_post='star_id='
 
 g_url='http://www.xingdiandian.com/home/checkin'
 
-proxies = ProxyQueue(is_thread=True, filename='kuaidaili.txt')
+if sys.argv[1]!= None:
+	proxies = ProxyQueue(is_thread=True, filename=sys.argv[1])
+else:
+	proxies = ProxyQueue(is_thread=True)
 
 # f=open('xingdiandian.txt', 'a')
 
@@ -62,16 +65,16 @@ class mythread(threading.Thread):
 					post.url = g_url
 					for startid in arr:
 						post.post = g_post+str(startid)
-						wait=1
-						while wait<10 and wait!=0:
-							if wait>1:
-								print 'sleeping (' +str(wait) + ')+1 secs to post again---' 
-								time.sleep(wait)
-							res = Loginer.post(session, post)
-							con=res.read()
-							params = con.split(';')	
-							wait = int(params[4])
-							print str(startid)+'||'+con
+						# wait=1
+						# while wait<10 and wait!=0:
+							# if wait>1:
+								# print 'sleeping (' +str(wait) + ')+1 secs to post again---' 
+								# time.sleep(wait)
+						res = Loginer.post(session, post)
+						con=res.read()
+						params = con.split(';')	
+						wait = int(params[4])
+						print str(startid)+'||'+con
 					# print >>f, proxy
 					# if i%5==0:
 					# 	f.flush()
@@ -92,7 +95,8 @@ class mythread(threading.Thread):
 						# print exstr
 						break
 
-tc = 200
+tc = int(sys.argv[2]) if sys.argv[2] != None else 80
+
 threads = []
 
 for i in range(1, tc+1):

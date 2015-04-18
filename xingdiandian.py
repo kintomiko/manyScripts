@@ -22,7 +22,7 @@ g_header={
 'X-Requested-With':'XMLHttpRequest',
 'X-CSRF-Token':''
 }
-arr = [591, 6086, 6089, 6090, 6092, 6093]
+arr = [591, 6103, 6104, 6105, 6106, 6107, 6097, 6098, 6099, 6100, 6101, 6102, 6086, 6089, 6090, 6092, 6093]
 
 g_post='star_id='
 
@@ -65,16 +65,16 @@ class mythread(threading.Thread):
 					post.url = g_url
 					for startid in arr:
 						post.post = g_post+str(startid)
-						# wait=1
-						# while wait<10 and wait!=0:
-							# if wait>1:
-								# print 'sleeping (' +str(wait) + ')+1 secs to post again---' 
-								# time.sleep(wait)
-						res = Loginer.post(session, post)
-						con=res.read()
-						params = con.split(';')	
-						wait = int(params[4])
-						print str(startid)+'||'+con
+						wait=1
+						while wait<10 and wait!=0:
+							if wait>1:
+								print 'sleeping (' +str(wait) + ')+1 secs to post again---' 
+								time.sleep(wait)
+							res = Loginer.post(session, post)
+							con=res.read()
+							params = con.split(';')	
+							wait = int(params[4])
+							print str(startid)+'||'+con
 					# print >>f, proxy
 					# if i%5==0:
 					# 	f.flush()

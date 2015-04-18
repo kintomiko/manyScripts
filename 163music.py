@@ -23,6 +23,14 @@ g_header = {
 }
 arr = ['action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=31311180&json%5Btime%5D=288&json%5Bend%5D=playend',
 'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=31246383&json%5Btime%5D=298&json%5Bend%5D=playend',
+'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=109054&json%5Btime%5D=168&json%5Bend%5D=playend',
+'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=28190492&json%5Btime%5D=259&json%5Bend%5D=playend',
+'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=28208244&json%5Btime%5D=225&json%5Bend%5D=playend',
+'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=27836035&json%5Btime%5D=262&json%5Bend%5D=playend',
+'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=29498105&json%5Btime%5D=187&json%5Bend%5D=playend',
+'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=413018&json%5Btime%5D=326&json%5Bend%5D=playend',
+'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=31246384&json%5Btime%5D=221&json%5Bend%5D=playend',
+'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=31246385&json%5Btime%5D=291&json%5Bend%5D=playend',
 'action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&json%5Bid%5D=31311181&json%5Btime%5D=222&json%5Bend%5D=playend']
 
 g_url='http://music.163.com/api/log/web?csrf_token='

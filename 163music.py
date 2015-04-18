@@ -78,7 +78,7 @@ class mythread(threading.Thread):
 						# print exstr
 						break
 
-tc = 2000
+tc = 500
 
 threads = []
 

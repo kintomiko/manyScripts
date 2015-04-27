@@ -35,10 +35,10 @@ arr = ['action=play&json%5Btype%5D=song&json%5Bwifi%5D=0&json%5Bdownload%5D=0&js
 
 g_url='http://music.163.com/api/log/web?csrf_token='
 
-# if sys.argv[1]!= None:
-# 	proxies = ProxyQueue(is_thread=True, filename=sys.argv[1])
-# else:
-# 	proxies = ProxyQueue(is_thread=True)
+if sys.argv[1]!= None:
+	proxies = ProxyQueue(is_thread=True, filename=sys.argv[1])
+else:
+	proxies = ProxyQueue(is_thread=True)
 
 # f=open('xingdiandian.txt', 'a')
 
@@ -52,9 +52,9 @@ class mythread(threading.Thread):
 			i=0
 			errc=0
 			try:
-				# proxy = proxies.getProxy()
-				# session = Session(proxy)
-				session = Session()
+				proxy = proxies.getProxy()
+				session = Session(proxy)
+				# session = Session()
 			except:
 				print 'read proxy or session error'
 				exstr = traceback.format_exc()
@@ -86,7 +86,7 @@ class mythread(threading.Thread):
 						# print exstr
 						break
 
-tc = 2000
+tc = 1000
 
 threads = []
 

@@ -10,6 +10,7 @@ from ProxyQueue import ProxyQueue
 import sys
 
 g_url = 'http://interaction.wap.sogou.com/interaction?reqtype=vote&querystr=%E5%A7%9A%E8%B4%9D%E5%A8%9C&querytype=0&callback=jsonp4&vrid=100001&'
+g_url1 = 'http://interaction.wap.sogou.com/interaction?reqtype=vote&querystr=%E9%83%91%E6%B7%B3%E5%85%83&querytype=0&callback=jsonp12&vrid=100001&'
 
 if sys.argv[1]!= None:
 	proxies = ProxyQueue(is_thread=True, filename=sys.argv[1])
@@ -23,7 +24,7 @@ class mythread(threading.Thread):
 	def __init__(self):  
 		threading.Thread.__init__(self) 
 	def run(self):
-		global g_url,proxies
+		global g_url,g_url1,proxies
 		while 1:
 			i=0
 			errc=0
@@ -44,6 +45,8 @@ class mythread(threading.Thread):
 					log = 'userid='+userparam+'&sec='+mdpass+'&login=0'
 					for i in range(10):
 						res = session.open(g_url+log)
+						print res.read()
+						res = session.open(g_url1+log)
 						print res.read()
 					errc=0
 					break

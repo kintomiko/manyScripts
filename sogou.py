@@ -12,6 +12,7 @@ import sys
 g_url = 'http://interaction.wap.sogou.com/interaction?reqtype=vote&querystr=%E5%A7%9A%E8%B4%9D%E5%A8%9C&querytype=0&callback=jsonp4&vrid=100001&'
 g_url1 = 'http://interaction.wap.sogou.com/interaction?reqtype=vote&querystr=%E9%83%91%E6%B7%B3%E5%85%83&querytype=0&callback=jsonp12&vrid=100001&'
 g_url2= 'http://interaction.wap.sogou.com/interaction?reqtype=vote&querystr=%E6%9D%A8%E5%9D%A4&querytype=0&callback=jsonp22&vrid=100001&'
+g_url3='http://interaction.wap.sogou.com/interaction?reqtype=vote&querystr=%E5%A7%9C%E9%B9%8F&querytype=0&callback=jsonp5&vrid=100001'
 
 if sys.argv[1]!= None:
 	proxies = ProxyQueue(is_thread=True, filename=sys.argv[1])
@@ -47,7 +48,7 @@ class mythread(threading.Thread):
 					for i in range(10):
 						res = session.open(g_url2+log)
 						print res.read()
-						res = session.open(g_url1+log)
+						res = session.open(g_url3+log)
 						print res.read()
 					errc=0
 					break

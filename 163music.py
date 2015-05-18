@@ -47,7 +47,7 @@ class mythread(threading.Thread):
 	def __init__(self):  
 		threading.Thread.__init__(self) 
 	def run(self):
-		global g_header, th, g_post, g_url,proxies, f, arr
+		global g_header, th, g_url, arr
 		while 1:
 			i=0
 			errc=0
@@ -67,11 +67,11 @@ class mythread(threading.Thread):
 					for post in arr:
 						req.post=post
 						res = Loginer.post(session, req)
-						print res.read()
+						print str(threading.current_thread()) + '||' + res.read()
 					# print >>f, proxy
 					# if i%5==0:
 					# 	f.flush()
-					session.opener.close()
+					# session.opener.close()
 					# if json.loads(con)['code']==200:
 					# 	print con
 					# if json.loads(con)['code']==500:
@@ -82,11 +82,11 @@ class mythread(threading.Thread):
 					# print 'error! count: '+ str(errc)
 					if errc>th:
 						exstr = traceback.format_exc()
-						session.opener.close()
+						# session.opener.close()
 						# print exstr
 						break
 
-tc = 500
+tc = 200
 
 threads = []
 

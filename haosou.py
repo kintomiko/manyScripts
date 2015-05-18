@@ -8,8 +8,10 @@ import threading,traceback
 import Queue
 from ProxyQueue import ProxyQueue
 
-headers = {'User-Agent': 'Mozilla/5.0',
+headers = {
 'Accept': '*/*',
+'Pragma': 'no-cache',
+'Cache-Control': 'no-cache',
 'Host':'open.onebox.haosou.com',
 'Referer':'http://m.haosou.com/mhtml/zt/hotlist.html',
 'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'}
@@ -21,8 +23,8 @@ pollUrl='http://open.onebox.haosou.com/api/dovote?key=%E5%A7%9A%E8%B4%9D%E5%A8%9
 
 proxies = ProxyQueue(is_thread=True)
 pollnum = 10
-lock = threading.Lock()
-f = open('rawproxyHaosou.txt', 'a')
+# lock = threading.Lock()
+# f = open('rawproxyHaosou.txt', 'a')
 pcount=0
 count = 0
 
@@ -63,8 +65,8 @@ class mythread(threading.Thread):
 					# res = session.open(pollUrl2+str(int(time.time()*1e3)), time_out=10)
 					req = HttpRequest()
 					req.header = headers
-					req.url = index
-					res = Loginer.get(session, req)
+					# req.url = index
+					# res = Loginer.get(session, req)
 					for i in range(pollnum):
 						req.url = pollUrl+str(4+i)
 						res = Loginer.get(session, req)
@@ -89,7 +91,7 @@ class mythread(threading.Thread):
 						# print exstr
 						break
 
-tc = 2000
+tc = 1000
 threads = []
 
 for i in range(1, tc+1):
